@@ -18,7 +18,7 @@
         }
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px; /* Smaller container width */
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -44,6 +44,8 @@
             transition: background-color 0.3s;
             user-select: none;
             background-color: #f4f4f4; /* Add background color to the tiles */
+            width: 100%; /* Make tiles take up full width of the container */
+            box-sizing: border-box; /* Prevent tiles from overflowing */
         }
         .dessert-item:hover {
             background-color: #e0e0e0; /* Slight change in color on hover */
@@ -204,7 +206,7 @@
     function checkCarrotCakeRanking() {
         const firstItem = dessertList.children[0].querySelector('span').textContent;
         if (firstItem === 'Carrot Cake') {
-            resultImage.src = "nadine_happy.jpeg"; // Pass image
+            resultImage.src = "nadine_happy2.jpeg"; // Pass image
             message.textContent = "PASS - carrot cake is the best :)";
             message.classList.add("pass-message");
             message.classList.remove("fail-message");
