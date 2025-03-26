@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dessert Drag and Drop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .dessert-list {
+            list-style: none;
+            padding: 0;
+        }
+        .dessert-item {
+            padding: 10px;
+            margin: 8px 0;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            cursor: move;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s;
+        }
+        .dessert-item:active {
+            background-color: #ccc;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Drag and Drop Desserts</h2>
+    <ul id="dessert-list" class="dessert-list">
+        <li class="dessert-item" draggable="true">Cheesecake</li>
+        <li class="dessert-item" draggable="true">Apple Pie</li>
+        <li class="dessert-item" draggable="true">Chocolate Chip Cookies</li>
+        <li class="dessert-item" draggable="true">Brownies</li>
+        <li class="dessert-item" draggable="true">Ice Cream Sundae</li>
+        <li class="dessert-item" draggable="true">S'mores</li>
+        <li class="dessert-item" draggable="true">Banana Split</li>
+        <li class="dessert-item" draggable="true">Pumpkin Pie</li>
+        <li class="dessert-item" draggable="true">Red Velvet Cake</li>
+        <li class="dessert-item" draggable="true">Carrot Cake</li>
+    </ul>
+    <div class="button-container">
+        <button onclick="resetOrder()">Reset Order</button>
+    </div>
+</div>
+
+<script>
+    const dessertList = document.getElementById('dessert-list');
+    let draggedItem = null;
+
+    // Event listeners for drag-and-drop functionality
+    dessertList.addEventListener('dragstart', function(e) {
+        draggedItem = e.target;
+        e.target.style.opacity = '0.5';
+    });
+
+    dessertList.addEventListener('dragend', function(e) {
+        e.target.style.opacity = '';
+    });
+
+    dessertList.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    });
+
+    dessertList.addEventListener('dragenter', function(e) {
+        if (e.target && e.target.nodeName === 'LI' && e.target !== draggedItem) {
+            e.target.style.backgroundColor = '#dcdcdc';
+        }
+    });
+
+    dessertList.addEventListener('dragleave', function(e) {
+        if (e.target && e.target.nodeName === 'LI') {
+            e.target.style.backgroundColor = '';
+        }
+    });
+
+    dessertList.addEventListener('drop', function(e) {
+        e.preventDefault();
+        if (e.target && e.target.nodeName === 'LI' && e.target !== draggedItem) {
+            const allItems = [...dessertList.children];
+            const draggedIndex = allItems.indexOf(draggedItem);
+            const targetIndex = allItems.indexOf(e.target);
+
+            // Swap the dragged item with the target
+            if (draggedIndex < targetIndex) {
+                dessertList.insertBefore(draggedItem, e.target.nextSibling);
+            } else {
+                dessertList.insertBefore(draggedItem, e.target);
+            }
+            e.target.style.backgroundColor = '';
+        }
+    });
+
+    // Reset the order of the desserts
+    function resetOrder() {
+        const items = document.querySelectorAll('.dessert-item');
+        const list = document.getElementById('dessert-list');
+        items.forEach(item => list.appendChild(item));
+    }
+</script>
+
+</body>
+</html>
