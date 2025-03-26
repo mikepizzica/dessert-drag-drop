@@ -4,33 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dessert Drag and Drop</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
-            padding: 0;
         }
         .container {
-            width: 90%;
-            max-width: 800px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         h2 {
             text-align: center;
-            width: 100%;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-        .dessert-list {
-            list-style: none;
-            padding: 0;
-            width: 60%;
-            margin: 0;
+        .dessert-list-container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
         }
         .dessert-item {
             display: flex;
@@ -44,12 +45,192 @@
             transition: background-color 0.3s;
             user-select: none;
         }
-        .dessert-item:active {
-            background-color: #ccc;
+        .ranking {
+            font-weight: bold;
+            padding: 0 10px;
+            background-color: #e0e0e0;
+            margin-right: 10px;
+            border-radius: 5px;
+            min-width: 30px;
+            text-align: center;
         }
-        .ranking-sidebar {
-            width: 35%;
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba
+        .dessert-item span {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            .dessert-item {
+                flex-direction: row;
+                justify-content: flex-start;
+                font-size: 14px;
+            }
+            .ranking {
+                font-size: 14px;
+                padding: 5px 8px;
+            }
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .button-container button {
+                width: 100%;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dessert-item {
+                font-size: 12px;
+            }
+            .ranking {
+                font-size: 12px;
+                padding: 5px 7px;
+            }
+            .button-container button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Drag and Drop Desserts</h2>
+    <div id="dessert-list" class="dessert-list-container">
+        <div class="dessert-item" id="dessert-1">
+            <div class="ranking">1</div><span>Cheesecake</span>
+        </div>
+        <div class="dessert-item" id="dessert-2">
+            <div class="ranking">2</div><span>Apple Pie</span>
+        </div>
+        <div class="dessert-item" id="dessert-3">
+            <div class="ranking">3</div><span>Chocolate Chip Cookies</span>
+        </div>
+        <div class="dessert-item" id="dessert-4">
+            <div class="ranking">4</div><span>Brownies</span>
+        </div>
+        <div class="dessert-item" id="dessert-5">
+            <div class="ranking">5</div><span>Ice Cream Sundae</span>
+        </div>
+        <div class="dessert-item" id="dessert-6">
+            <div class="ranking">6</div><span>S'mores</span>
+        </div>
+        <div class="dessert-item" id="dessert-7">
+            <div class="ranking">7</div><span>Banana Split</span>
+        </div>
+        <div class="dessert-item" id="dessert-8">
+            <div class="ranking">8</div><span>Pumpkin Pie</span>
+        </div>
+        <div class="dessert-item" id="dessert-9">
+            <div class="ranking">9</div><span>Red Velvet Cake</span>
+        </div>
+        <div class="dessert-item" id="dessert-10">
+            <div class="ranking">10</div><span>Carrot Cake</span>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button id="submit-button">Submit</button>
+        <button id="reset-button">Reset</button>
+    </div>
+
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const submitButton = document.getElementById('submit-button');
+    const resetButton = document.getElementById('reset-button');
+    const messageDiv = document.getElementById('message');
+    const initialOrder = [
+        'Cheesecake', 'Apple Pie', 'Chocolate Chip Cookies', 'Brownies', 
+        'Ice Cream Sundae', 'S\'mores', 'Banana Split', 'Pumpkin Pie', 
+        'Red Velvet Cake', 'Carrot Cake'
+    ];
+
+    let dessertList = document.getElementById('dessert-list');
+    let sortable = new Sortable(dessertList, {
+        animation: 150,
+        onEnd: function (evt) {
+            updateRanking();
+        }
+    });
+
+    // Update rankings after dragging
+    function updateRanking() {
+        const items = dessertList.children;
+        for (let i = 0; i < items.length; i++) {
+            items[i].querySelector('.ranking').textContent = i + 1; // Update rankings from 1 to 10
+        }
+    }
+
+    // Check if Carrot Cake is at the top
+    function checkCarrotCakeRanking() {
+        const firstItem = dessertList.children[0].querySelector('span').textContent;
+        if (firstItem === 'Carrot Cake') {
+            messageDiv.textContent = 'PASS - carrot cake is the best :)';
+            messageDiv.style.color = 'green';
+        } else {
+            messageDiv.textContent = 'FAIL - carrot cake is not #1 :(';
+            messageDiv.style.color = 'red';
+        }
+    }
+
+    // Reset the list to its initial order
+    function resetOrder() {
+        const items = [...dessertList.children];
+        items.forEach((item, index) => {
+            item.querySelector('span').textContent = initialOrder[index];
+        });
+        updateRanking(); // Reapply the rankings after reset
+    }
+
+    // Submit button click
+    submitButton.addEventListener('click', function() {
+        checkCarrotCakeRanking();
+    });
+
+    // Reset button click
+    resetButton.addEventListener('click', function() {
+        resetOrder();
+        messageDiv.textContent = '';
+    });
+
+    // Initialize rankings on page load
+    updateRanking();
+</script>
+
+</body>
+</html>
