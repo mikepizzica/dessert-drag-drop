@@ -12,22 +12,19 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
             margin: 0;
-            overflow: hidden;
+            flex-direction: column;
+            text-align: center;
         }
         .container {
             width: 100%;
             max-width: 600px;
-            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: relative;
-            z-index: 10;
         }
         h2 {
-            text-align: center;
             margin-bottom: 20px;
             font-size: 24px;
         }
@@ -41,17 +38,19 @@
             align-items: center;
             padding: 10px;
             margin: 8px 0;
-            background-color: #f8f8f8;
             border-radius: 5px;
             cursor: move;
             border: 1px solid #ccc;
             transition: background-color 0.3s;
             user-select: none;
+            background-color: #f4f4f4; /* Add background color to the tiles */
+        }
+        .dessert-item:hover {
+            background-color: #e0e0e0; /* Slight change in color on hover */
         }
         .ranking {
             font-weight: bold;
             padding: 0 10px;
-            background-color: #e0e0e0;
             margin-right: 10px;
             border-radius: 5px;
             min-width: 30px;
@@ -80,40 +79,59 @@
         .button-container button:hover {
             background-color: #45a049;
         }
-        .message {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .result-image {
-            position: absolute;
+        #result-container {
+            display: none;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-            z-index: -1;
+            z-index: 100;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        .result-message {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 32px;
-            font-weight: bold;
+        .reset-button {
+            font-size: 18px;
+            padding: 10px 20px;
             color: white;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-            z-index: 10;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
         }
-        .hidden {
-            display: none;
+        #message {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .pass-message {
+            color: green;
+        }
+        .fail-message {
+            color: red;
+        }
+        .result-image {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
 <body>
 
+<!-- Result container -->
+<div id="result-container" class="hidden">
+    <div id="message"></div>
+    <button id="reset-button" class="reset-button">Reset</button>
+    <img id="result-image" class="result-image" src="" alt="Result Image">
+</div>
+
+<!-- Main Quiz Content -->
 <div class="container" id="container">
     <h2>Drag and Drop Desserts</h2>
     <div id="dessert-list" class="dessert-list-container">
@@ -151,22 +169,15 @@
 
     <div class="button-container">
         <button id="submit-button">Submit</button>
-        <button id="reset-button" class="hidden">Reset</button>
     </div>
-
-    <div class="message" id="message"></div>
 </div>
-
-<!-- Placeholder image that takes full screen on submit -->
-<img id="result-image" class="result-image" src="happy_llama.jpg" alt="Result Image" />
-<div id="result-message" class="result-message"></div>
 
 <script>
     const submitButton = document.getElementById('submit-button');
     const resetButton = document.getElementById('reset-button');
-    const messageDiv = document.getElementById('message');
+    const resultContainer = document.getElementById('result-container');
     const resultImage = document.getElementById('result-image');
-    const resultMessage = document.getElementById('result-message');
+    const message = document.getElementById('message');
     const initialOrder = [
         'Cheesecake', 'Apple Pie', 'Chocolate Chip Cookies', 'Brownies', 
         'Ice Cream Sundae', 'S\'mores', 'Banana Split', 'Pumpkin Pie', 
@@ -193,21 +204,23 @@
     function checkCarrotCakeRanking() {
         const firstItem = dessertList.children[0].querySelector('span').textContent;
         if (firstItem === 'Carrot Cake') {
-            resultMessage.textContent = 'PASS - carrot cake is the best :)';
-            resultMessage.style.color = 'green';
-            resultImage.src = 'happy_llama.jpg'; // Show the image
+            resultImage.src = "nadine_happy.jpeg"; // Pass image
+            message.textContent = "PASS - carrot cake is the best :)";
+            message.classList.add("pass-message");
+            message.classList.remove("fail-message");
+            resetButton.style.backgroundColor = "#4CAF50"; // Green button
         } else {
-            resultMessage.textContent = 'FAIL - carrot cake is not #1 :(';
-            resultMessage.style.color = 'red';
-            resultImage.src = 'happy_llama.jpg'; // Show the image
+            resultImage.src = "nadine_sad.jpeg"; // Fail image
+            message.textContent = "FAIL - wrong top dessert :(";
+            message.classList.add("fail-message");
+            message.classList.remove("pass-message");
+            resetButton.style.backgroundColor = "#f44336"; // Red button
         }
-        resultImage.style.display = 'block';
-        resultMessage.style.display = 'block';
         
+        resultContainer.style.display = 'flex'; // Show the result container
+
         // Hide the quiz and submit button
         document.getElementById('container').style.display = 'none';
-        submitButton.classList.add('hidden');
-        resetButton.classList.remove('hidden');
     }
 
     // Reset the list to its initial order
@@ -217,14 +230,10 @@
             item.querySelector('span').textContent = initialOrder[index];
         });
         updateRanking(); // Reapply the rankings after reset
-        resultImage.style.display = 'none'; // Hide the image
-        resultMessage.style.display = 'none'; // Hide the message
-        messageDiv.textContent = ''; // Clear the message
 
         // Reset the page and make submit visible again
         document.getElementById('container').style.display = 'block';
-        submitButton.classList.remove('hidden');
-        resetButton.classList.add('hidden');
+        resultContainer.style.display = 'none'; // Hide the result container
     }
 
     // Submit button click
@@ -232,7 +241,7 @@
         checkCarrotCakeRanking();
     });
 
-    // Reset button click
+    // Reset button click (after submission)
     resetButton.addEventListener('click', function() {
         resetOrder();
     });
