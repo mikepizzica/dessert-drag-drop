@@ -53,8 +53,7 @@
             transition: background-color 0.3s;
             user-select: none;
             background-color: #f4f4f4; /* Add background color to the tiles */
-            width: 100%; /* Make all tiles take up 100% width of the container */
-            max-width: 388px; /* Decreased width by 12px */
+            width: 250px; /* Fixed width */
             box-sizing: border-box; /* Prevent tiles from overflowing */
             justify-content: flex-start; /* Align items to the start */
         }
@@ -203,11 +202,16 @@
         }
     });
 
+    // Save the current ranking when submitted
+    let currentRankings = [];
+
     // Update rankings after dragging
     function updateRanking() {
         const items = dessertList.children;
+        currentRankings = []; // Clear previous rankings
         for (let i = 0; i < items.length; i++) {
             items[i].querySelector('.ranking').textContent = i + 1; // Update rankings from 1 to 10
+            currentRankings.push(items[i].querySelector('span').textContent); // Save the current ranking
         }
     }
 
@@ -234,13 +238,12 @@
         document.getElementById('container').style.display = 'none';
     }
 
-    // Reset the list to its initial order
+    // Reset the list to its initial order but leave rankings as they are
     function resetOrder() {
         const items = [...dessertList.children];
         items.forEach((item, index) => {
-            item.querySelector('span').textContent = initialOrder[index];
+            item.querySelector('span').textContent = currentRankings[index]; // Preserve the rankings
         });
-        updateRanking(); // Reapply the rankings after reset
 
         // Reset the page and make submit visible again
         document.getElementById('container').style.display = 'block';
