@@ -17,21 +17,30 @@
             text-align: center;
         }
         .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the content horizontally */
             width: 100%;
-            max-width: 500px; /* Smaller container width */
-            padding: 20px;
+            max-width: 500px; /* Limit max width */
+            padding: 50px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
         }
         h2 {
-            margin-bottom: 20px;
+            margin-top: 10px !important;
+            margin-bottom: 0px !important; /* Reduced margin */
             font-size: 24px;
+        }
+        p.blurb {
+            font-size: 14px; /* Smaller font size for the blurb */
+            color: #555;
+            margin: 0px !important;
         }
         .dessert-list-container {
             display: flex;
             flex-direction: column;
-            align-items: stretch;
+            align-items: center; /* Center the items in the column */
+            width: auto; /* Let the width adjust based on the items */
         }
         .dessert-item {
             display: flex;
@@ -44,22 +53,21 @@
             transition: background-color 0.3s;
             user-select: none;
             background-color: #f4f4f4; /* Add background color to the tiles */
-            width: 100%; /* Make tiles take up full width of the container */
+            width: 100%; /* Make all tiles take up 100% width of the container */
+            max-width: 388px; /* Decreased width by 12px */
             box-sizing: border-box; /* Prevent tiles from overflowing */
+            justify-content: flex-start; /* Align items to the start */
         }
         .dessert-item:hover {
             background-color: #e0e0e0; /* Slight change in color on hover */
         }
         .ranking {
             font-weight: bold;
-            padding: 0 10px;
-            margin-right: 10px;
             border-radius: 5px;
             min-width: 30px;
             text-align: center;
         }
         .dessert-item span {
-            margin-left: 10px;
             font-size: 16px;
         }
         .button-container {
@@ -136,6 +144,7 @@
 <!-- Main Quiz Content -->
 <div class="container" id="container">
     <h2>Drag and Drop Desserts</h2>
+    <p class="blurb">Rank your favorite desserts! For the purposes of this quiz, assume that each dessert is at its pinnacle (i.e., "Cheesecake" means the best cheesecake ever).</p>
     <div id="dessert-list" class="dessert-list-container">
         <div class="dessert-item" id="dessert-1">
             <div class="ranking">1</div><span>Cheesecake</span>
